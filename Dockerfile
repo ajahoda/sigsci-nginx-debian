@@ -1,28 +1,32 @@
-FROM debian:8
+FROM debian:9
 
-# initial setup
+# Initial setup
 RUN apt-get update
-RUN apt-get install -y apt-transport-https wget sed curl
+RUN apt-get install -y apt-transport-https wget sed curl gnupg
 
-# add the signal sciences repo to our apt sources
+# Add the signal sciences repo to our apt sources
 RUN wget -qO - https://apt.signalsciences.net/gpg.key | apt-key add -
 RUN echo "deb https://apt.signalsciences.net/release/debian/ jessie main" > /etc/apt/sources.list.d/sigsci-release.list
 RUN apt-get update
-RUN echo "deb https://apt.signalsciences.net/nginx/mainline jessie main" > /etc/apt/sources.list.d/sigsci-nginx.list
-RUN apt-get update
-RUN apt-get -y install nginx
 
+# Install nginx + Lua
+RUN apt-get -y install nginx-extras
 
-# install and configure the sigsci agent
+# Install the sigsci agent
 RUN apt-get -y install sigsci-agent
-# install the sigsci module
+# Install the sigsci module
 RUN apt-get -y install sigsci-module-nginx
 
-RUN  mkdir /app && mkdir /etc/sigsci && mkdir /etc/nginx/sites-enabled
+# Configure nginx.conf and basic html
 COPY app/nginx.conf /etc/nginx/nginx.conf
 COPY app/default.conf /etc/nginx/sites-enabled/default.conf
 COPY app/index.html /usr/share/nginx/html/index.html
+
+# Configure Signal Sciences
+RUN  mkdir /app && mkdir /etc/sigsci
 COPY contrib/agent.conf /etc/sigsci/agent.conf
+
+# Configure start script
 COPY start.sh /app/start.sh
 RUN chmod +x /app/start.sh
 
