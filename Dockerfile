@@ -6,7 +6,7 @@ RUN apt-get install -y apt-transport-https wget sed curl gnupg
 
 # Add the signal sciences repo to our apt sources
 RUN wget -qO - https://apt.signalsciences.net/gpg.key | apt-key add -
-RUN echo "deb https://apt.signalsciences.net/release/debian/ jessie main" > /etc/apt/sources.list.d/sigsci-release.list
+RUN echo "deb https://apt.signalsciences.net/release/debian/ stretch main" > /etc/apt/sources.list.d/sigsci-release.list
 RUN apt-get update
 
 # Install nginx + Lua
